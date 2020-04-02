@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {StyleSheet, View, SafeAreaView} from 'react-native';
 import * as Font from 'expo-font'; //package that allows us to load fonts
 import {AppLoading} from 'expo'; //will prolong loading screen until app is ready - used here to make sure fonts are loaded
 
@@ -51,10 +51,10 @@ export default function App() {
     }
 
     return (
-        <View style={styles.screen}>
+        <SafeAreaView style={styles.screen}>
             <Header title="Guess a Number"/>
             {content}
-        </View>
+        </SafeAreaView>
     );
 }
 
