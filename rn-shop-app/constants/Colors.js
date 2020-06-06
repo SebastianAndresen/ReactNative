@@ -1,4 +1,4 @@
-export default({
-    primary: '#4a148c',
-    secondary: '#ff6f00'
-});
+export default {
+    primary: '#C2185B',
+    secondary: '#FFC107'
+}
