@@ -1,5 +1,5 @@
 import React from 'react';
-import {Button, FlatList, Text, Platform} from 'react-native';
+import {Button, FlatList, Text, Platform, Alert} from 'react-native';
 import {useSelector, useDispatch} from "react-redux";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 
@@ -31,6 +31,28 @@ const WishlistScreen = props => {
         </EmptyScreen>;
     }
 
+    const addToGiftListHandler = (id) => {
+        Alert.alert('Add item to shopping list', "Are you sure you want to add this item to your shopping list? You promise to others that you will give this item, as no one else can claim this gift now.", [
+            {text: 'Back', style: 'default'},
+            {
+                text: 'Add item', style: 'destructive', onPress: () => {
+                    dispatch(wishActions.addToGiftList(id));
+                }
+            }
+        ]);
+    };
+
+    const removeFromGiftListHandler = (id) => {
+        Alert.alert('Remove item from shopping list', "Are you sure you want to remove this item from your shopping list?", [
+            {text: 'Back', style: 'default'},
+            {
+                text: 'Remove item', style: 'destructive', onPress: () => {
+                    dispatch(wishActions.removeFromGiftList(id));
+                }
+            }
+        ]);
+    };
+
     return (<FlatList
         data={wishes}
         renderItem={itemData => <WishItem
@@ -52,16 +74,12 @@ const WishlistScreen = props => {
                 title={itemData.item.takenId === '' ? "Add to Gift List" : `Given by ${users.find(user => user.id === itemData.item.takenId).name}`}
                 disabled={myList || itemData.item.takenId !== ''}
                 onPress={() => {
-                    if (itemData.item.takenId === '') {
-                        dispatch(wishActions.addToGiftList(itemData.item.id));
-                    }
+                    if (itemData.item.takenId === '') {addToGiftListHandler(itemData.item.id);}
                 }}/>}
             {itemData.item.takenId === 'u4' && <Button
                 color={Colors.secondary}
                 title="Remove from gift list"
-                onPress={() => {
-                    dispatch(wishActions.removeFromGiftList(itemData.item.id));
-                }}/>}
+                onPress={() => {removeFromGiftListHandler(itemData.item.id);}}/>}
         </WishItem>}
     />);
 };

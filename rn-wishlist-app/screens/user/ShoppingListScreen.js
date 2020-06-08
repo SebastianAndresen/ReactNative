@@ -1,11 +1,13 @@
 import React from 'react';
-import {Button, FlatList, Text, View, StyleSheet} from 'react-native';
-import {useSelector} from "react-redux";
+import {Button, FlatList, Text, View, StyleSheet, Platform} from 'react-native';
+import {useSelector, useDispatch} from "react-redux";
 
 import Card from "../../components/UI/Card";
 import Colors from "../../constants/Colors";
 import ItemValues from "../../components/WishList/ItemValues";
 import EmptyScreen from "../../components/UI/EmptyScreen";
+import * as wishesActions from "../../store/actions/wishes";
+import {Ionicons} from "@expo/vector-icons";
 
 const ShoppingListScreen = props => {
     const wishes = useSelector(state => state.wishes.allWishes).filter(wish => wish.takenId === 'u4');
@@ -16,6 +18,8 @@ const ShoppingListScreen = props => {
             <Text>You haven't placed anything here yet.</Text>
         </EmptyScreen>;
     }
+
+    const dispatch = useDispatch();
 
     return (
         <FlatList
@@ -32,27 +36,36 @@ const ShoppingListScreen = props => {
                             renderItem={wishData => (
                                 <View style={styles.itemContainer}>
                                     <View style={styles.itemInformation}>
-                                        <Text style={styles.itemTitle}>{wishData.item.title}</Text>
+                                        {wishData.item.bought && <Text style={{...styles.itemTitle, ...{textDecorationLine: 'line-through'}}}>{wishData.item.title}</Text>}
+                                        {!wishData.item.bought && <Text style={styles.itemTitle}>{wishData.item.title}</Text>}
                                         <View style={styles.itemValues}>
                                             <ItemValues
                                                 price={wishData.item.price}
                                                 joy={wishData.item.joy}
-                                                color={Colors.primary}
+                                                color={wishData.item.bought ? Colors.toned : Colors.primary}
                                                 size={23}
                                             />
                                         </View>
                                     </View>
-                                    <Button
-                                        color={Colors.secondary}
-                                        title="Details"
-                                        onPress={() => {
-                                            props.navigation.navigate('WishDetails', {
-                                                wishId: wishData.item.id,
-                                                wishTitle: wishData.item.title,
-                                                myList: false,
-                                                takenId: wishData.item.takenId
-                                            });
-                                        }}/>
+                                    <View style={styles.buttonContainer}>
+                                        <Button
+                                            color={wishData.item.bought ? Colors.toned : Colors.primary}
+                                            title="Details"
+                                            onPress={() => {
+                                                props.navigation.navigate('WishDetails', {
+                                                    wishId: wishData.item.id,
+                                                    wishTitle: wishData.item.title,
+                                                    myList: false,
+                                                    takenId: wishData.item.takenId
+                                                });
+                                            }}/>
+                                        <Button
+                                            color={wishData.item.bought ? Colors.toned : Colors.secondary}
+                                            title={wishData.item.bought ? "Bought" : "Not Bought Yet"}
+                                            onPress={() => {
+                                                dispatch(wishesActions.toggleBought(wishData.item.id));
+                                            }}/>
+                                    </View>
                                 </View>
                             )}
                         />
@@ -100,6 +113,11 @@ const styles = StyleSheet.create({
     },
     itemValues: {
         width: '35%'
+    },
+    buttonContainer: {
+        marginTop: 2,
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     }
 });
 

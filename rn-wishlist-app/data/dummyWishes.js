@@ -172,8 +172,8 @@ const WISHES = [
         'Headset',
         'My old headset broke. It does not have to be the kind the picture shows, but something in that direction.',
         'https://www.bestrandoms.com/Goods/erji.jpg',
-        3,
-        2,
+        0,
+        0,
         '',
         false
     ),

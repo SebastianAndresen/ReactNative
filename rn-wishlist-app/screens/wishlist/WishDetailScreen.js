@@ -1,11 +1,12 @@
 import React, {useState} from 'react';
-import {Button, Image, Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
+import {Alert, Button, Image, Platform, ScrollView, StyleSheet, Text, View} from 'react-native';
 import {useSelector, useDispatch} from "react-redux";
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 
 import HeaderButton from "../../components/UI/HeaderButton";
 import * as wishActions from "../../store/actions/wishes";
 import Colors from "../../constants/Colors";
+import ItemValues from "../../components/WishList/ItemValues";
 
 const WishDetailScreen = props => {
     const [toggleToForceRerender, setToggleToForceRerender] = useState(true);
@@ -18,6 +19,30 @@ const WishDetailScreen = props => {
 
     const dispatch = useDispatch();
 
+    const addToGiftListHandler = (id) => {
+        Alert.alert('Add item to shopping list', "Are you sure you want to add this item to your shopping list? You promise to others that you will give this item, as no one else can claim this gift now.", [
+            {text: 'Back', style: 'default'},
+            {
+                text: 'Add item', style: 'destructive', onPress: () => {
+                    dispatch(wishActions.addToGiftList(id));
+                    setToggleToForceRerender(!toggleToForceRerender);
+                }
+            }
+        ]);
+    };
+
+    const removeFromGiftListHandler = (id) => {
+        Alert.alert('Remove item from shopping list', "Are you sure you want to remove this item from your shopping list?", [
+            {text: 'Back', style: 'default'},
+            {
+                text: 'Remove item', style: 'destructive', onPress: () => {
+                    dispatch(wishActions.removeFromGiftList(id));
+                    setToggleToForceRerender(!toggleToForceRerender);
+                }
+            }
+        ]);
+    };
+
     return (<ScrollView>
         {itemHasImage && <Image style={styles.image} source={{uri: selectedItem.imageUrl}}/>}
         <View style={styles.actions}>
@@ -26,20 +51,21 @@ const WishDetailScreen = props => {
                 title={selectedItem.takenId === '' ? "Add to Gift List" : `Given by ${users.find(user => user.id === selectedItem.takenId).name}`}
                 disabled={myList || selectedItem.takenId !== ''}
                 onPress={() => {
-                    if (selectedItem.takenId === '') {
-                        dispatch(wishActions.addToGiftList(selectedItem.id));
-                        setToggleToForceRerender(!toggleToForceRerender);
-                    }
+                    if (selectedItem.takenId === '') {addToGiftListHandler(selectedItem.id)}
                 }}/>}
             {selectedItem.takenId === 'u4' && <Button
                 color={Colors.secondary}
                 title="Remove from gift list"
-                onPress={() => {
-                    dispatch(wishActions.removeFromGiftList(selectedItem.id));
-                    setToggleToForceRerender(!toggleToForceRerender);
-                }}/>}
+                onPress={() => {removeFromGiftListHandler(selectedItem.id)}}/>}
         </View>
-        <Text style={styles.price}>${selectedItem.price.toFixed(2)}</Text>
+        <View style={styles.itemValues}>
+            <ItemValues
+                price={selectedItem.price}
+                joy={selectedItem.joy}
+                color={Colors.primary}
+                size={38}
+            />
+        </View>
         <Text style={styles.description}>{selectedItem.description}</Text>
     </ScrollView>);
 };
@@ -74,11 +100,16 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         fontFamily: 'open-sans-bold'
     },
+    itemValues: {
+        marginVertical: 15,
+        marginHorizontal: '20%'
+    },
     description: {
         fontFamily: 'open-sans',
-        fontSize: 14,
+        fontSize: 16,
         textAlign: 'center',
-        marginHorizontal: 20
+        marginHorizontal: 35,
+        marginBottom: 20
     }
 });
 

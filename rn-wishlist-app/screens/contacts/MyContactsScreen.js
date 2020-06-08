@@ -6,7 +6,7 @@ import {
     FlatList,
     StyleSheet,
     TouchableOpacity,
-    TouchableNativeFeedback,
+    TouchableNativeFeedback, Alert,
 } from 'react-native';
 import {HeaderButtons, Item} from "react-navigation-header-buttons";
 import HeaderButton from "../../components/UI/HeaderButton";
@@ -31,13 +31,24 @@ const MyContactsScreen = props => {
         TouchableCmp = TouchableNativeFeedback;
     }
 
+    const deleteHandler = (id) => {
+        Alert.alert('Are you sure?', 'Do you really want to remove this person from your contacts?', [
+            {text: 'No', style: 'default'},
+            {
+                text: 'Yes', style: 'destructive', onPress: () => {
+                    dispatch(userActions.removeContact(id));
+                }
+            }
+        ]);
+    };
+
     return <FlatList
         data={users}
         renderItem={itemData =>
             <View style={{...styles.container, ...{backgroundColor: itemData.item.color}}}>
                 <View style={styles.touchable}>
                     <TouchableCmp onLongPress={() => {
-                        dispatch(userActions.removeContact(itemData.item.id));
+                        deleteHandler(itemData.item.id);
                     }} useForeground>
                         <View style={styles.information}>
                             <Text style={styles.name}>{itemData.item.name}</Text>

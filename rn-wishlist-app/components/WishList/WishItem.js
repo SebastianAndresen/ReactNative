@@ -2,6 +2,8 @@ import React from 'react';
 import {View, Text, Image, StyleSheet, TouchableOpacity, TouchableNativeFeedback, Platform} from 'react-native';
 
 import Card from '../UI/Card';
+import ItemValues from "./ItemValues";
+import Colors from "../../constants/Colors";
 
 const WishItem = props => {
     const itemHasImage = props.image !== '';
@@ -20,7 +22,14 @@ const WishItem = props => {
                     </View>}
                     <View style={styles.details}>
                         <Text style={styles.title}>{props.title}</Text>
-                        <Text style={styles.price}>${props.price.toFixed(2)}</Text>
+                    </View>
+                    <View style={styles.itemValues}>
+                        <ItemValues
+                            price={props.price}
+                            joy={props.joy}
+                            color={Colors.primary}
+                            size={23}
+                        />
                     </View>
                     <View style={styles.actions}>
                         {props.children}
@@ -33,7 +42,6 @@ const WishItem = props => {
 
 const styles = StyleSheet.create({
     product: {
-        height: 300,
         margin: 20
     },
     touchable: {
@@ -42,7 +50,7 @@ const styles = StyleSheet.create({
     },
     imageContainer: {
         width: '100%',
-        height: '60%',
+        height: 180,
         borderTopLeftRadius: 10,
         borderTopRightRadius: 10,
         overflow: 'hidden'
@@ -53,25 +61,22 @@ const styles = StyleSheet.create({
     },
     details: {
         alignItems: 'center',
-        height: '17%',
-        padding: 10
+        paddingTop: 5
     },
     title: {
         fontFamily: 'open-sans-bold',
         fontSize: 18,
         marginVertical: 2
     },
-    price: {
-        fontFamily: 'open-sans',
-        fontSize: 14,
-        color: '#888'
+    itemValues: {
+        marginHorizontal: 20
     },
     actions: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        height: '23%',
-        paddingHorizontal: 20
+        paddingHorizontal: 20,
+        paddingVertical: 10
     }
 });
 
